@@ -48,7 +48,14 @@ final class PersonRelationsController extends ElementRelationsBaseController
      */
     public function getEntities(Request $request, Response $response, array $args): Response
     {
-        // @TODO
+        $personId = (int) $args['personId'];
+        $person = $this->em->find(Person::class, $personId);
+        if (!$person) {
+            return $response->withStatus(404)->withJson(['message' => 'Person not found']);
+        }
+
+        $entities = $person->getEntities();
+        return $response->withJson($entities);
     }
 
     /**
@@ -64,7 +71,24 @@ final class PersonRelationsController extends ElementRelationsBaseController
      */
     public function operationEntity(Request $request, Response $response, array $args): Response
     {
-        // @TODO
+        $personId = (int) $args['personId'];
+        $entityId = (int) $args['stuffId'];
+        $action = strpos($request->getUri()->getPath(), '/add/') !== false ? 'add' : 'remove';
+
+        $person = $this->em->find(Person::class, $personId);
+        $entity = $this->em->find(\TDW\ACiencia\Entity\Entity::class, $entityId);
+        if (!$person || !$entity) {
+            return $response->withStatus(404)->withJson(['message' => 'Person or Entity not found']);
+        }
+
+        if ($action === 'add') {
+            $person->addEntity($entity);
+        } else {
+            $person->removeEntity($entity);
+        }
+
+        $this->em->flush();
+        return $response->withJson($person);
     }
 
     /**
@@ -76,10 +100,19 @@ final class PersonRelationsController extends ElementRelationsBaseController
      *
      * @return Response
      */
+
     public function getProducts(Request $request, Response $response, array $args): Response
     {
-        // @TODO
+        $personId = (int) $args['personId'];
+        $person = $this->em->find(Person::class, $personId);
+        if (!$person) {
+            return $response->withStatus(404)->withJson(['message' => 'Person not found']);
+        }
+
+        $products = $person->getProducts();
+        return $response->withJson($products);
     }
+
 
     /**
      * PUT /persons/{personId}/products/add/{stuffId}
@@ -94,6 +127,23 @@ final class PersonRelationsController extends ElementRelationsBaseController
      */
     public function operationProduct(Request $request, Response $response, array $args): Response
     {
-        // @TODO
+        $personId = (int) $args['personId'];
+        $productId = (int) $args['stuffId'];
+        $action = strpos($request->getUri()->getPath(), '/add/') !== false ? 'add' : 'remove';
+
+        $person = $this->em->find(Person::class, $personId);
+        $product = $this->em->find(\TDW\ACiencia\Entity\Product::class, $productId);
+        if (!$person || !$product) {
+            return $response->withStatus(404)->withJson(['message' => 'Person or Product not found']);
+        }
+
+        if ($action === 'add') {
+            $person->addProduct($product);
+        } else {
+            $person->removeProduct($product);
+        }
+
+        $this->em->flush();
+        return $response->withJson($person);
     }
 }

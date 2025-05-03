@@ -52,7 +52,7 @@ final class ProductRelationsController extends ElementRelationsBaseController
         if ($productId <= 0 || $productId > 2147483647) {   // 404
             return $this->getElements($request, $response, null, EntityQueryController::getEntitiesTag(), []);
         }
-        /** @var Product|null $product */
+        /* @var Product|null $product */
         $product = $this->entityManager
             ->getRepository(ProductQueryController::getEntityClassName())
             ->find($productId);
@@ -98,7 +98,7 @@ final class ProductRelationsController extends ElementRelationsBaseController
         if ($productId <= 0 || $productId > 2147483647) {   // 404
             return $this->getElements($request, $response, null, PersonQueryController::getEntitiesTag(), []);
         }
-        /** @var Product|null $product */
+        /* @var Product|null $product */
         $product = $this->entityManager
             ->getRepository(ProductQueryController::getEntityClassName())
             ->find($productId);
